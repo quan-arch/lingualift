@@ -58,8 +58,8 @@ class DefaultFirebaseOptions {
   );
 
   static FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBlPH8q2h11HrsSeblO1AzO-vsTbUlQcWA',
-    appId: '1:342747374939:android:65cc8e0e192aa7ac04e67e',
+    apiKey: 'AIzaSyAtDuq0ZvTq4o4HGfplemLUvSTwi-6gGb4',
+    appId: '1:342747374939:ios:89139efa254d2d0804e67e',
     messagingSenderId: '342747374939',
     projectId: 'lingualift-796e0',
     storageBucket: 'lingualift-796e0.firebasestorage.app'
