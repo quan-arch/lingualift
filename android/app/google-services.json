@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "342747374939",
+    "project_id": "lingualift-796e0",
+    "storage_bucket": "lingualift-796e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:342747374939:android:65cc8e0e192aa7ac04e67e",
+        "android_client_info": {
+          "package_name": "vn.viettinbank.lingualift"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlPH8q2h11HrsSeblO1AzO-vsTbUlQcWA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
