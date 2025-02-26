@@ -3,6 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
+import 'package:lingualift/common/incomplete_sentence.dart';
+import 'package:lingualift/common/single_answer_question.dart';
 import 'package:lingualift/firebase_options.dart';
 
 void main() async {
@@ -106,145 +108,44 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            _buildBodyWidget(context),
+            SafeArea(child: _buildBodyWidget(context)),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAppbar(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(top: 49),
-      child: Text(
-        'TOPIC NUMBER 1',
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    );
-  }
-
   Widget _buildBodyWidget(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildAppbar(context),
-          const SizedBox(height: 93),
-          _buildCountdownTimer(context),
-          const SizedBox(height: 58),
-          _buildQnA(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCountdownTimer(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Image.asset(
-          width: 40,
-          height: 40,
-          AppImages.countdownTimer,
-          fit: BoxFit.fill,
-        ),
-        const SizedBox(height: 6),
-        Text(
-          '00:09s',
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQnA(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 43),
-      child: StreamBuilder<QuerySnapshot>(
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return Text("Something went wrong");
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("Loading");
-          }
-
-          List<Question> data =
-              snapshot.data!.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> json =
-                document.data()! as Map<String, dynamic>;
-            Question data = Question.fromJson(json);
-            return data;
-          }).toList();
-
-          if (data.isEmpty) return Text("Empty");
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildQuestion(context, data.first.question),
-              const SizedBox(height: 37),
-              _buildAnswer(context, data.first.answer1),
-              const SizedBox(height: 10),
-              _buildAnswer(context, data.first.answer2),
-              const SizedBox(height: 10),
-              _buildAnswer(context, data.first.answer3),
-              const SizedBox(height: 10),
-              _buildAnswer(context, data.first.answer4),
-            ],
-          );
-
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> json =
-                  document.data()! as Map<String, dynamic>;
-              Question data = Question.fromJson(json);
+    return ListView.builder(
+        itemCount: 2,
+        itemBuilder: (_, index) {
+          switch (index) {
+            case 0:
               return ListTile(
-                title: Text(data.question),
-                subtitle: Text(data.correctAnswer),
+                title: Text('Single answer question'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SingleAnswerQuestionPage(
+                            title: 'Single answer question')),
+                  );
+                },
               );
-            }).toList(),
-          );
-        },
-        stream: _collectionStream,
-      ),
-    );
-  }
-
-  Widget _buildQuestion(BuildContext context, String text) {
-    return Text(
-      text,
-      style: TextStyle(
-          fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-    );
-  }
-
-  Widget _buildAnswer(BuildContext context, String text) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Image.asset(
-          width: 20,
-          height: 20,
-          AppImages.radioBlack,
-          fit: BoxFit.fill,
-        ),
-        const SizedBox(width: 6),
-        Expanded(
-          child: Text(
-            text,
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.normal,
-                color: Colors.black),
-          ),
-        ),
-      ],
-    );
+            default:
+              return ListTile(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const IncompleteSentencePage(
+                            title: 'Single answer question')),
+                  );
+                },
+                title: Text('Incomplete sentence'),
+              );
+          }
+        });
   }
 }
 
