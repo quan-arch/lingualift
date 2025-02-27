@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
-import 'package:lingualift/common/incomplete_sentence.dart';
-import 'package:lingualift/common/single_answer_question.dart';
+import 'package:lingualift/incomplete_sentence.dart';
+import 'package:lingualift/single_answer_question.dart';
 import 'package:lingualift/firebase_options.dart';
 
 void main() async {
