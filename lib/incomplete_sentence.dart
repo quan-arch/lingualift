@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/component/app_blue_button.dart';
+import 'package:lingualift/component/app_white_button.dart';
 
 class IncompleteSentencePage extends StatefulWidget {
   const IncompleteSentencePage({super.key, required this.title});
@@ -139,20 +140,26 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildQuestion(context,
-              'A. Write the verb in brackets in the correct form, present simple or present continuous, in each gap.'),
+          _buildQuestion(context, mock.first.question),
           const SizedBox(height: 37),
           _buildAnswer(context),
-          _hasAnyAnswerIncorrect() ? _buildErrorMessage(context, mock.first) : const SizedBox.shrink(),
+          _hasAnyAnswerIncorrect()
+              ? _buildErrorMessage(context, mock.first)
+              : const SizedBox.shrink(),
           const SizedBox(height: 44),
-          AppBlueButton(
-            text: 'Check the answer',
-            textColor: Colors.white,
-            background: AppColors.blue,
-            onTap: () {
-              checkAnswer();
-            },
-          )
+          _isTapCheckedAnswer
+              ? AppWhiteButton(
+                  text: 'Next question',
+                  onTap: () {
+                    /// do something here
+                  },
+                )
+              : AppBlueButton(
+                  text: 'Check the answer',
+                  onTap: () {
+                    checkAnswer();
+                  },
+                )
         ],
       ),
     );
@@ -176,7 +183,7 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('1', style: TextStyle(fontSize: 16, color: Colors.black)),
+        Text('1', style: TextStyle(fontSize: 16, color: AppColors.black)),
         SizedBox(width: 10),
         Expanded(
           child: Text.rich(
@@ -227,12 +234,22 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
                   enableSuggestions: false,
                   keyboardType: TextInputType.text,
                   textAlign: TextAlign.center,
+                  onChanged: (text) {
+                    updateAnswerByKey(key: sentence.key, answer: text);
+                  },
                   style: TextStyle(
-                    decoration: TextDecoration.none,
-                    decorationThickness: 0,
+                    decoration: _isThisAnswerInCorrect(sentence.key)
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
                     fontSize: 16,
-                    color: _isThisAnswerCorrect(sentence.key) ? AppColors.green : AppColors.blue,
-                    fontWeight: _isThisAnswerCorrect(sentence.key) ? FontWeight.bold : FontWeight.w300
+                    color: _isThisAnswerCorrect(sentence.key)
+                        ? AppColors.green
+                        : _isThisAnswerInCorrect(sentence.key)
+                            ? AppColors.grey
+                            : AppColors.blue,
+                    fontWeight: _isThisAnswerCorrect(sentence.key)
+                        ? FontWeight.bold
+                        : FontWeight.w300,
                   ),
                   maxLines: 1,
                   decoration: const InputDecoration(
@@ -292,12 +309,12 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          yourAnswer,
+          yourAnswer.isNotEmpty ? yourAnswer : 'No answer',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w300,
-            color: AppColors.black,
-            decoration: TextDecoration.lineThrough,
+            color: AppColors.grey,
+            decoration: yourAnswer.isNotEmpty ? TextDecoration.lineThrough: TextDecoration.none,
           ),
         ),
         const SizedBox(width: 5),
@@ -362,17 +379,22 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
   }
 
   void checkAnswer() {
+    setState(() {
+      _isTapCheckedAnswer = true;
+    });
     FocusManager.instance.primaryFocus?.unfocus();
     List<Sentence> correctAnswers = mock.first.sentences
         .where((answer) => answer.type == 'answer')
         .toList();
-    for(int i = 0; i < _myAnswers.length; i++) {
+    for (int i = 0; i < _myAnswers.length; i++) {
       final key = _myAnswers[i].key;
       final answer = _myAnswers[i].answer;
-      final index = correctAnswers.indexWhere((c) => c.correctAnswer == answer && c.key == key);
-      if(index == -1) {
+      final index = correctAnswers
+          .indexWhere((c) => c.correctAnswer == answer && c.key == key);
+      if (index == -1) {
         setState(() {
-          _myAnswers[i] = _myAnswers[i].copyWith(status: AnswerStatus.incorrect);
+          _myAnswers[i] =
+              _myAnswers[i].copyWith(status: AnswerStatus.incorrect);
         });
       } else {
         setState(() {
@@ -382,25 +404,39 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
     }
   }
 
-  bool _hasAnyAnswerIncorrect(){
-    final index = _myAnswers.indexWhere((c) => c.status == AnswerStatus.incorrect);
-    return index != -1;
+  void updateAnswerByKey({required String key, required String answer}) {
+    final index = _myAnswers.indexWhere((c) => c.key == key);
+    if (index != -1) {
+      setState(() {
+        _myAnswers[index] = _myAnswers[index]
+            .copyWith(answer: answer, status: AnswerStatus.waiting);
+      });
+    }
   }
 
-  Answer? _findAnswerByKey(String key) {
-    final index = _myAnswers.indexWhere((c) => c.key == key);
-    if(index == -1) return null;
-    return _myAnswers[index];
+  bool _hasAnyAnswerIncorrect() {
+    final index =
+        _myAnswers.indexWhere((c) => c.status == AnswerStatus.incorrect);
+    return index != -1;
   }
 
   bool _isThisAnswerCorrect(String key) {
-    final index = _myAnswers.indexWhere((c) => c.key == key && c.status == AnswerStatus.correct);
+    final index = _myAnswers
+        .indexWhere((c) => c.key == key && c.status == AnswerStatus.correct);
     return index != -1;
   }
 
+  bool _isThisAnswerInCorrect(String key) {
+    final index = _myAnswers
+        .indexWhere((c) => c.key == key && c.status == AnswerStatus.incorrect);
+    return index != -1;
+  }
+
+  bool _isTapCheckedAnswer = false;
+
   final _myAnswers = [
-    Answer(answer: 'is doing', key: '1a'),
-    Answer(answer: 'don\'t see', key: '1b')
+    Answer(answer: '', key: '1a', status: AnswerStatus.waiting),
+    Answer(answer: '', key: '1b', status: AnswerStatus.waiting)
   ];
 
   List<IncompleteSentenceQuestion> mock = [
@@ -421,7 +457,7 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
             correctAnswer: 'don\'t see'),
         Sentence(content: 'see', type: 'suggestion', key: '1b'),
         Sentence(
-            content: 'him very often, unfortunately', type: 'word', key: ''),
+            content: 'him very often, unfortunately.', type: 'word', key: ''),
       ],
     )
   ];
