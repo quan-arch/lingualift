@@ -24,6 +24,65 @@ class IncompleteSentencePage extends StatefulWidget {
 }
 
 class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
+  int currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      listenInvitedMembers((questions) {
+        setState(() {
+          mock = List<IncompleteSentenceQuestion>.from(questions);
+          final answers = mock[currentIndex]
+              .sentences
+              .where((answer) => answer.type == 'answer')
+              .toList();
+          final inits = answers.map((Sentence sentence) {
+            return Answer(
+                answer: '',
+                key: sentence.key,
+                status: AnswerStatus.waiting,
+            );
+          }).toList();
+          _myAnswers.clear();
+          _myAnswers.addAll(inits);
+        });
+      });
+    });
+  }
+
+  void listenInvitedMembers(
+      Function(List<IncompleteSentenceQuestion>) callback) {
+    List<IncompleteSentenceQuestion> data = [];
+    try {
+      // TODO:Stream管理
+      FirebaseFirestore.instance
+          .collection('incomplete-sentences')
+          .snapshots()
+          .listen((querySnapshot) {
+        for (final doc in querySnapshot.docs) {
+          if (!doc.exists) {
+            print('(!doc.exists)');
+
+            return;
+          }
+
+          data = querySnapshot.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> json =
+                document.data()! as Map<String, dynamic>;
+            IncompleteSentenceQuestion data =
+                IncompleteSentenceQuestion.fromJson(json);
+            return data;
+          }).toList();
+        }
+
+        callback(data);
+      });
+    } catch (e, stackTrace) {
+      print('catch:$e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -135,23 +194,41 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
   }
 
   Widget _buildQnA(BuildContext context) {
+    if (mock.isEmpty) return const Center(child: Text('Empty'));
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 43),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _buildQuestion(context, mock.first.question),
+          _buildQuestion(context, mock[currentIndex].question),
           const SizedBox(height: 37),
           _buildAnswer(context),
           _hasAnyAnswerIncorrect()
-              ? _buildErrorMessage(context, mock.first)
+              ? _buildErrorMessage(context, mock[currentIndex])
               : const SizedBox.shrink(),
           const SizedBox(height: 44),
           _isTapCheckedAnswer
               ? AppWhiteButton(
                   text: 'Next question',
                   onTap: () {
-                    /// do something here
+                    setState(() {
+                      // reset all data
+                      _isTapCheckedAnswer = false;
+                      _myAnswers.clear();
+                      _myAnswers.addAll([
+                        Answer(
+                            answer: '',
+                            key: '1a',
+                            status: AnswerStatus.waiting),
+                        Answer(
+                            answer: '',
+                            key: '1b',
+                            status: AnswerStatus.waiting)
+                      ]);
+
+                      if (currentIndex == mock.length - 1) return;
+                      currentIndex++;
+                    });
                   },
                 )
               : AppBlueButton(
@@ -176,7 +253,7 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
 
   Widget _buildAnswer(BuildContext context) {
     List<InlineSpan> spans = [];
-    for (var sentence in mock.first.sentences) {
+    for (var sentence in mock[currentIndex].sentences) {
       final listInlineWidget = fromSentenceToWidget(sentence);
       spans.addAll(listInlineWidget);
     }
@@ -287,7 +364,7 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
           ),
         ),
         const SizedBox(height: 8),
-        ...fromAnswerBoxToWidget(mock.first.sentences),
+        ...fromAnswerBoxToWidget(question.sentences),
       ],
     );
   }
@@ -314,7 +391,9 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
             fontSize: 16,
             fontWeight: FontWeight.w300,
             color: AppColors.grey,
-            decoration: yourAnswer.isNotEmpty ? TextDecoration.lineThrough: TextDecoration.none,
+            decoration: yourAnswer.isNotEmpty
+                ? TextDecoration.lineThrough
+                : TextDecoration.none,
           ),
         ),
         const SizedBox(width: 5),
@@ -383,7 +462,8 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
       _isTapCheckedAnswer = true;
     });
     FocusManager.instance.primaryFocus?.unfocus();
-    List<Sentence> correctAnswers = mock.first.sentences
+    List<Sentence> correctAnswers = mock[currentIndex]
+        .sentences
         .where((answer) => answer.type == 'answer')
         .toList();
     for (int i = 0; i < _myAnswers.length; i++) {
@@ -434,32 +514,29 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
 
   bool _isTapCheckedAnswer = false;
 
-  final _myAnswers = [
-    Answer(answer: '', key: '1a', status: AnswerStatus.waiting),
-    Answer(answer: '', key: '1b', status: AnswerStatus.waiting)
-  ];
+  final _myAnswers = [];
 
   List<IncompleteSentenceQuestion> mock = [
-    IncompleteSentenceQuestion(
-      question:
-          'A. Write the verb in brackets in the correct form, present simple or present continuous, in each gap.',
-      type: 'incomplete_sentence',
-      sentences: [
-        Sentence(content: 'My brother', type: 'word', key: ''),
-        Sentence(
-            content: '', type: 'answer', key: '1a', correctAnswer: 'is doing'),
-        Sentence(content: 'do', type: 'suggestion', key: '1a'),
-        Sentence(content: 'degree at university so I', type: 'word', key: '1a'),
-        Sentence(
-            content: '',
-            type: 'answer',
-            key: '1b',
-            correctAnswer: 'don\'t see'),
-        Sentence(content: 'see', type: 'suggestion', key: '1b'),
-        Sentence(
-            content: 'him very often, unfortunately.', type: 'word', key: ''),
-      ],
-    )
+    // IncompleteSentenceQuestion(
+    //   question:
+    //       'A. Write the verb in brackets in the correct form, present simple or present continuous, in each gap.',
+    //   type: 'incomplete_sentence',
+    //   sentences: [
+    //     Sentence(content: 'My brother', type: 'word', key: ''),
+    //     Sentence(
+    //         content: '', type: 'answer', key: '1a', correctAnswer: 'is doing'),
+    //     Sentence(content: 'do', type: 'suggestion', key: '1a'),
+    //     Sentence(content: 'degree at university so I', type: 'word', key: '1a'),
+    //     Sentence(
+    //         content: '',
+    //         type: 'answer',
+    //         key: '1b',
+    //         correctAnswer: 'don\'t see'),
+    //     Sentence(content: 'see', type: 'suggestion', key: '1b'),
+    //     Sentence(
+    //         content: 'him very often, unfortunately.', type: 'word', key: ''),
+    //   ],
+    // )
   ];
 }
 
@@ -475,7 +552,11 @@ class IncompleteSentenceQuestion {
 
   IncompleteSentenceQuestion.fromJson(Map<String, Object?> json)
       : this(
-          sentences: (json['sentences']! as List<Sentence>),
+          sentences: (json['sentences']! as List?)
+                  ?.cast<Map<String, Object?>>()
+                  .map(Sentence.fromJson)
+                  .toList() ??
+              const [],
           question: json['question']! as String,
           type: json['type']! as String,
         );
@@ -511,7 +592,7 @@ class Sentence {
           content: (json['content']! as String),
           type: json['type']! as String,
           key: json['key']! as String,
-          correctAnswer: json['correct_answer']! as String,
+          correctAnswer: json['correct_answer'] as String?,
         );
 
   Map<String, Object?> toJson() {
@@ -545,18 +626,5 @@ class Answer {
       key: key ?? this.key,
       status: status ?? this.status,
     );
-  }
-
-  Answer.fromJson(Map<String, Object?> json)
-      : this(
-          answer: (json['answer']! as String),
-          key: json['key']! as String,
-        );
-
-  Map<String, Object?> toJson() {
-    return {
-      'answer': answer,
-      'key': key,
-    };
   }
 }
