@@ -138,7 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const IncompleteSentencePage(
+                        builder: (context) => const IncompleteSentenceWrapperPage(
                             title: 'Single answer question')),
                   );
                 },

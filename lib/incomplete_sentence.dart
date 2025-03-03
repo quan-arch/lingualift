@@ -1,21 +1,26 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:lingualift/common/app_colors.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lingualift/common/app_images.dart';
-import 'package:lingualift/component/app_blue_button.dart';
-import 'package:lingualift/component/app_white_button.dart';
+import 'package:lingualift/cubit/incomplete_sentence/incomplete_sentence_cubit.dart';
+import 'package:lingualift/entity/question_entity.dart';
+import 'package:lingualift/widgets/incomplete_sentence_widget.dart';
+
+class IncompleteSentenceWrapperPage extends StatelessWidget {
+  const IncompleteSentenceWrapperPage({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<IncompleteSentenceCubit>(
+      create: (_) => IncompleteSentenceCubit()..fetchData(),
+      child: IncompleteSentencePage(title: title),
+    );
+  }
+}
 
 class IncompleteSentencePage extends StatefulWidget {
   const IncompleteSentencePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -24,63 +29,27 @@ class IncompleteSentencePage extends StatefulWidget {
 }
 
 class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
-  int currentIndex = 0;
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      listenInvitedMembers((questions) {
-        setState(() {
-          mock = List<IncompleteSentenceQuestion>.from(questions);
-          final answers = mock[currentIndex]
-              .sentences
-              .where((answer) => answer.type == 'answer')
-              .toList();
-          final inits = answers.map((Sentence sentence) {
-            return Answer(
-                answer: '',
-                key: sentence.key,
-                status: AnswerStatus.waiting,
-            );
-          }).toList();
-          _myAnswers.clear();
-          _myAnswers.addAll(inits);
-        });
-      });
+      // listenInvitedMembers((questions) {
+      //   setState(() {
+      //     mock = List<QuestionEntity>.from(questions);
+      //     final answers = mock[currentIndex]
+      //         .sentences
+      //         .where((answer) => answer.type == 'answer')
+      //         .toList();
+      //     final inits = answers.map((SentenceEntity sentence) {
+      //       return AnswerEntity(
+      //         answer: '',
+      //         key: sentence.key,
+      //         status: AnswerStatus.waiting,
+      //       );
+      //     }).toList();
+      //   });
+      // });
     });
-  }
-
-  void listenInvitedMembers(
-      Function(List<IncompleteSentenceQuestion>) callback) {
-    List<IncompleteSentenceQuestion> data = [];
-    try {
-      // TODO:Stream管理
-      FirebaseFirestore.instance
-          .collection('incomplete-sentences')
-          .snapshots()
-          .listen((querySnapshot) {
-        for (final doc in querySnapshot.docs) {
-          if (!doc.exists) {
-            print('(!doc.exists)');
-
-            return;
-          }
-
-          data = querySnapshot.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> json =
-                document.data()! as Map<String, dynamic>;
-            IncompleteSentenceQuestion data =
-                IncompleteSentenceQuestion.fromJson(json);
-            return data;
-          }).toList();
-        }
-
-        callback(data);
-      });
-    } catch (e, stackTrace) {
-      print('catch:$e');
-    }
   }
 
   @override
@@ -116,7 +85,36 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
               ),
             ),
           ),
-          SafeArea(child: _buildBodyWidget(context)),
+          SafeArea(
+            child: Column(
+              children: [
+                _buildAppbar(context),
+                BlocBuilder<IncompleteSentenceCubit, IncompleteSentenceState>(
+                  builder: (blocContext, state) {
+                    if (state.status == LoadStatus.loading) {
+                      return SizedBox.shrink();
+                    }
+                    if (state.status == LoadStatus.failure) {
+                      return Center(
+                        child: Text('Failure'),
+                      );
+                    }
+                    if (state.status == LoadStatus.success) {
+                      return IncompleteSentenceWidget(
+                          listQuestion: state.listQuestion,
+                          currentIndex: state.currentIndex,
+                          onNextPage: () {
+                            context.read<IncompleteSentenceCubit>().nextPage();
+                          });
+                    }
+                    return Center(
+                      child: Text('Init'),
+                    );
+                  },
+                )
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -159,364 +157,7 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
     );
   }
 
-  Widget _buildBodyWidget(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildAppbar(context),
-          const SizedBox(height: 93),
-          _buildCountdownTimer(context),
-          const SizedBox(height: 58),
-          _buildQnA(context)
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCountdownTimer(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Image.asset(
-          width: 40,
-          height: 40,
-          AppImages.countdownTimer,
-          fit: BoxFit.fill,
-        ),
-        const SizedBox(height: 6),
-        Text(
-          '00:09s',
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQnA(BuildContext context) {
-    if (mock.isEmpty) return const Center(child: Text('Empty'));
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 43),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildQuestion(context, mock[currentIndex].question),
-          const SizedBox(height: 37),
-          _buildAnswer(context),
-          _hasAnyAnswerIncorrect()
-              ? _buildErrorMessage(context, mock[currentIndex])
-              : const SizedBox.shrink(),
-          const SizedBox(height: 44),
-          _isTapCheckedAnswer
-              ? AppWhiteButton(
-                  text: 'Next question',
-                  onTap: () {
-                    setState(() {
-                      // reset all data
-                      _isTapCheckedAnswer = false;
-                      _myAnswers.clear();
-                      _myAnswers.addAll([
-                        Answer(
-                            answer: '',
-                            key: '1a',
-                            status: AnswerStatus.waiting),
-                        Answer(
-                            answer: '',
-                            key: '1b',
-                            status: AnswerStatus.waiting)
-                      ]);
-
-                      if (currentIndex == mock.length - 1) return;
-                      currentIndex++;
-                    });
-                  },
-                )
-              : AppBlueButton(
-                  text: 'Check the answer',
-                  onTap: () {
-                    checkAnswer();
-                  },
-                )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildQuestion(BuildContext context, String text) {
-    return Text(
-      text,
-      style: TextStyle(
-          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.black),
-      textAlign: TextAlign.center,
-    );
-  }
-
-  Widget _buildAnswer(BuildContext context) {
-    List<InlineSpan> spans = [];
-    for (var sentence in mock[currentIndex].sentences) {
-      final listInlineWidget = fromSentenceToWidget(sentence);
-      spans.addAll(listInlineWidget);
-    }
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('1', style: TextStyle(fontSize: 16, color: AppColors.black)),
-        SizedBox(width: 10),
-        Expanded(
-          child: Text.rich(
-            textAlign: TextAlign.start,
-            TextSpan(
-              children: spans,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  List<InlineSpan> _buildSuggestion(BuildContext context, String text) {
-    return [
-      TextSpan(
-        text: ' (',
-        style: TextStyle(fontSize: 16, color: Colors.black),
-      ),
-      TextSpan(
-        text: text,
-        style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
-      ),
-      TextSpan(
-        text: ') ',
-        style: TextStyle(fontSize: 16, color: Colors.black),
-      ),
-    ];
-  }
-
-  Widget _buildAnswerBox(BuildContext context, Sentence sentence) {
-    return SizedBox(
-      width: 150,
-      height: 20,
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 8,
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: 150,
-                height: 20,
-                child: TextFormField(
-                  cursorHeight: 16,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  keyboardType: TextInputType.text,
-                  textAlign: TextAlign.center,
-                  onChanged: (text) {
-                    updateAnswerByKey(key: sentence.key, answer: text);
-                  },
-                  style: TextStyle(
-                    decoration: _isThisAnswerInCorrect(sentence.key)
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    fontSize: 16,
-                    color: _isThisAnswerCorrect(sentence.key)
-                        ? AppColors.green
-                        : _isThisAnswerInCorrect(sentence.key)
-                            ? AppColors.grey
-                            : AppColors.blue,
-                    fontWeight: _isThisAnswerCorrect(sentence.key)
-                        ? FontWeight.bold
-                        : FontWeight.w300,
-                  ),
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                '.........................................................',
-                style: TextStyle(fontSize: 8),
-              ),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildErrorMessage(
-      BuildContext context, IncompleteSentenceQuestion question) {
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        Text(
-          'Sorry, not quite...',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: AppColors.black,
-          ),
-        ),
-        const SizedBox(height: 8),
-        ...fromAnswerBoxToWidget(question.sentences),
-      ],
-    );
-  }
-
-  Widget _buildCorrectedAnswer({
-    required BuildContext context,
-    required Sentence sentence,
-  }) {
-    final yourAnswer =
-        _myAnswers.where((answer) => answer.key == sentence.key).first.answer;
-
-    final correctAnswer = sentence.correctAnswer ?? '';
-
-    if (yourAnswer == correctAnswer) {
-      return SizedBox.shrink();
-    }
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          yourAnswer.isNotEmpty ? yourAnswer : 'No answer',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: AppColors.grey,
-            decoration: yourAnswer.isNotEmpty
-                ? TextDecoration.lineThrough
-                : TextDecoration.none,
-          ),
-        ),
-        const SizedBox(width: 5),
-        Image.asset(
-          width: 16,
-          height: 16,
-          AppImages.arrowRight,
-          fit: BoxFit.fill,
-        ),
-        const SizedBox(width: 5),
-        Text(
-          sentence.correctAnswer ?? '',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w300,
-            color: AppColors.red,
-          ),
-        ),
-      ],
-    );
-  }
-
-  List<Widget> fromAnswerBoxToWidget(List<Sentence> sentences) {
-    final results =
-        sentences.where((sentence) => sentence.type == 'answer').toList();
-    return results
-        .map(
-          (result) => _buildCorrectedAnswer(
-            context: context,
-            sentence: result,
-          ),
-        )
-        .toList();
-  }
-
-  List<InlineSpan> fromSentenceToWidget(Sentence sentence) {
-    switch (sentence.type) {
-      case 'word':
-        return [
-          TextSpan(
-            text: sentence.content,
-            style: TextStyle(
-                fontSize: 16, color: Colors.black, fontWeight: FontWeight.w300),
-          )
-        ];
-      case 'answer':
-        return [
-          WidgetSpan(
-            child: _buildAnswerBox(context, sentence),
-          )
-        ];
-      case 'suggestion':
-        return _buildSuggestion(context, sentence.content);
-      default:
-        return [
-          TextSpan(
-            text: sentence.content,
-            style: TextStyle(fontSize: 16, color: Colors.black),
-          )
-        ];
-    }
-  }
-
-  void checkAnswer() {
-    setState(() {
-      _isTapCheckedAnswer = true;
-    });
-    FocusManager.instance.primaryFocus?.unfocus();
-    List<Sentence> correctAnswers = mock[currentIndex]
-        .sentences
-        .where((answer) => answer.type == 'answer')
-        .toList();
-    for (int i = 0; i < _myAnswers.length; i++) {
-      final key = _myAnswers[i].key;
-      final answer = _myAnswers[i].answer;
-      final index = correctAnswers
-          .indexWhere((c) => c.correctAnswer == answer && c.key == key);
-      if (index == -1) {
-        setState(() {
-          _myAnswers[i] =
-              _myAnswers[i].copyWith(status: AnswerStatus.incorrect);
-        });
-      } else {
-        setState(() {
-          _myAnswers[i] = _myAnswers[i].copyWith(status: AnswerStatus.correct);
-        });
-      }
-    }
-  }
-
-  void updateAnswerByKey({required String key, required String answer}) {
-    final index = _myAnswers.indexWhere((c) => c.key == key);
-    if (index != -1) {
-      setState(() {
-        _myAnswers[index] = _myAnswers[index]
-            .copyWith(answer: answer, status: AnswerStatus.waiting);
-      });
-    }
-  }
-
-  bool _hasAnyAnswerIncorrect() {
-    final index =
-        _myAnswers.indexWhere((c) => c.status == AnswerStatus.incorrect);
-    return index != -1;
-  }
-
-  bool _isThisAnswerCorrect(String key) {
-    final index = _myAnswers
-        .indexWhere((c) => c.key == key && c.status == AnswerStatus.correct);
-    return index != -1;
-  }
-
-  bool _isThisAnswerInCorrect(String key) {
-    final index = _myAnswers
-        .indexWhere((c) => c.key == key && c.status == AnswerStatus.incorrect);
-    return index != -1;
-  }
-
-  bool _isTapCheckedAnswer = false;
-
-  final _myAnswers = [];
-
-  List<IncompleteSentenceQuestion> mock = [
+  List<QuestionEntity> mock = [
     // IncompleteSentenceQuestion(
     //   question:
     //       'A. Write the verb in brackets in the correct form, present simple or present continuous, in each gap.',
@@ -538,93 +179,4 @@ class _IncompleteSentencePageState extends State<IncompleteSentencePage> {
     //   ],
     // )
   ];
-}
-
-enum AnswerStatus { waiting, correct, incorrect }
-
-@immutable
-class IncompleteSentenceQuestion {
-  const IncompleteSentenceQuestion({
-    required this.question,
-    required this.type,
-    required this.sentences,
-  });
-
-  IncompleteSentenceQuestion.fromJson(Map<String, Object?> json)
-      : this(
-          sentences: (json['sentences']! as List?)
-                  ?.cast<Map<String, Object?>>()
-                  .map(Sentence.fromJson)
-                  .toList() ??
-              const [],
-          question: json['question']! as String,
-          type: json['type']! as String,
-        );
-
-  final String question;
-  final String type;
-  final List<Sentence> sentences;
-
-  Map<String, Object?> toJson() {
-    return {
-      'question': question,
-      'type': type,
-      'sentences': sentences,
-    };
-  }
-}
-
-class Sentence {
-  final String content;
-  final String type;
-  final String key;
-  final String? correctAnswer;
-
-  const Sentence({
-    required this.content,
-    required this.type,
-    required this.key,
-    this.correctAnswer,
-  });
-
-  Sentence.fromJson(Map<String, Object?> json)
-      : this(
-          content: (json['content']! as String),
-          type: json['type']! as String,
-          key: json['key']! as String,
-          correctAnswer: json['correct_answer'] as String?,
-        );
-
-  Map<String, Object?> toJson() {
-    return {
-      'content': content,
-      'type': type,
-      'key': key,
-      'correct_answer': correctAnswer
-    };
-  }
-}
-
-class Answer {
-  final String answer;
-  final String key;
-  final AnswerStatus status;
-
-  const Answer({
-    required this.answer,
-    required this.key,
-    this.status = AnswerStatus.waiting,
-  });
-
-  Answer copyWith({
-    String? answer,
-    String? key,
-    AnswerStatus? status,
-  }) {
-    return Answer(
-      answer: answer ?? this.answer,
-      key: key ?? this.key,
-      status: status ?? this.status,
-    );
-  }
 }
