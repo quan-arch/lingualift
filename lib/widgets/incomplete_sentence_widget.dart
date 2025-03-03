@@ -179,59 +179,62 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
   }
 
   Widget _buildAnswerBox(BuildContext context, SentenceEntity sentence) {
-    return SizedBox(
-      width: 150,
-      height: 20,
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 8,
-            child: Align(
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 1.0),
+      child: SizedBox(
+        width: 150,
+        height: 20,
+        child: Stack(
+          children: [
+            Positioned(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Text(
+                  '.........................................................',
+                  style: TextStyle(fontSize: 8),
+                ),
+              ),
+            ),
+            Align(
               alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                width: 150,
-                height: 20,
-                child: TextFormField(
-                  cursorHeight: 16,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  keyboardType: TextInputType.text,
-                  textAlign: TextAlign.center,
-                  onChanged: (text) {
-                    updateAnswerByKey(key: sentence.key, answer: text);
-                  },
-                  style: TextStyle(
-                    decoration: _isThisAnswerInCorrect(sentence.key)
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none,
-                    fontSize: 16,
-                    color: _isThisAnswerCorrect(sentence.key)
-                        ? AppColors.green
-                        : _isThisAnswerInCorrect(sentence.key)
-                            ? AppColors.grey
-                            : AppColors.blue,
-                    fontWeight: _isThisAnswerCorrect(sentence.key)
-                        ? FontWeight.bold
-                        : FontWeight.w300,
-                  ),
-                  maxLines: 1,
-                  decoration: const InputDecoration(
-                    border: InputBorder.none,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 0.0),
+                child: SizedBox(
+                  width: 150,
+                  child: TextFormField(
+                    cursorHeight: 16,
+                    autocorrect: false,
+                    enableSuggestions: false,
+                    keyboardType: TextInputType.text,
+                    textAlign: TextAlign.center,
+                    onChanged: (text) {
+                      updateAnswerByKey(key: sentence.key, answer: text);
+                    },
+                    style: TextStyle(
+                      decoration: _isThisAnswerInCorrect(sentence.key)
+                          ? TextDecoration.lineThrough
+                          : TextDecoration.none,
+                      fontSize: 16,
+                      color: _isThisAnswerCorrect(sentence.key)
+                          ? AppColors.green
+                          : _isThisAnswerInCorrect(sentence.key)
+                              ? AppColors.grey
+                              : AppColors.blue,
+                      fontWeight: _isThisAnswerCorrect(sentence.key)
+                          ? FontWeight.bold
+                          : FontWeight.w300,
+                    ),
+                    maxLines: 1,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.all(12.0),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Positioned(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Text(
-                '.........................................................',
-                style: TextStyle(fontSize: 8),
-              ),
-            ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
