@@ -164,16 +164,16 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
     return [
       TextSpan(
         text: ' (',
-        style: TextStyle(fontSize: 16, color: Colors.black),
+        style: TextStyle(fontSize: 16, color: AppColors.black),
       ),
       TextSpan(
         text: text,
         style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black),
+            fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.black),
       ),
       TextSpan(
         text: ') ',
-        style: TextStyle(fontSize: 16, color: Colors.black),
+        style: TextStyle(fontSize: 16, color: AppColors.black),
       ),
     ];
   }
@@ -329,7 +329,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
           TextSpan(
             text: sentence.content,
             style: TextStyle(
-                fontSize: 16, color: Colors.black, fontWeight: FontWeight.w300),
+                fontSize: 16, color: AppColors.black, fontWeight: FontWeight.w300),
           )
         ];
       case 'answer':
@@ -344,7 +344,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
         return [
           TextSpan(
             text: sentence.content,
-            style: TextStyle(fontSize: 16, color: Colors.black),
+            style: TextStyle(fontSize: 16, color: AppColors.black),
           )
         ];
     }
