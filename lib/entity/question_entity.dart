@@ -11,13 +11,13 @@ class QuestionEntity {
 
   QuestionEntity.fromJson(Map<String, Object?> json)
       : this(
-    sentences: (json['sentences']! as List?)
+    sentences: ((json['sentences'] ?? []) as List?)
         ?.cast<Map<String, Object?>>()
         .map(SentenceEntity.fromJson)
         .toList() ??
         const [],
-    question: json['question']! as String,
-    type: json['type']! as String,
+    question: (json['question'] ?? '') as String,
+    type: (json['type'] ?? '') as String,
   );
 
   final String question;

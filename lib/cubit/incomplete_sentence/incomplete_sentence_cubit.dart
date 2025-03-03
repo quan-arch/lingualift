@@ -9,12 +9,12 @@ part 'incomplete_sentence_state.dart';
 class IncompleteSentenceCubit extends Cubit<IncompleteSentenceState> {
   IncompleteSentenceCubit() : super(IncompleteSentenceState());
 
-  void fetchData(){
+  void fetchData({required String collectionName}){
     emit(state.copyWith(status: LoadStatus.loading));
     List<QuestionEntity> data = [];
     try {
       FirebaseFirestore.instance
-          .collection('incomplete-sentences')
+          .collection(collectionName)
           .snapshots()
           .listen((querySnapshot) {
         for (final doc in querySnapshot.docs) {

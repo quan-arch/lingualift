@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
-import 'package:lingualift/incomplete_sentence.dart';
+import 'package:lingualift/unit_one_a.dart';
 import 'package:lingualift/single_answer_question.dart';
 import 'package:lingualift/firebase_options.dart';
+import 'package:lingualift/unit_one_b.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -83,69 +83,93 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Positioned(
-              child: Align(
-                alignment: Alignment.topRight,
-                child: Image.asset(
-                  width: 215,
-                  height: 264,
-                  AppImages.bannerTopRight,
-                  fit: BoxFit.fill,
-                ),
+      body: Stack(
+        children: [
+          Positioned(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: Image.asset(
+                width: 215,
+                height: 264,
+                AppImages.bannerTopRight,
+                fit: BoxFit.fill,
               ),
             ),
-            Positioned(
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Image.asset(
-                  width: 225,
-                  height: 306,
-                  AppImages.bannerBottomLeft,
-                  fit: BoxFit.fitHeight,
-                ),
+          ),
+          Positioned(
+            child: Align(
+              alignment: Alignment.bottomLeft,
+              child: Image.asset(
+                width: 225,
+                height: 306,
+                AppImages.bannerBottomLeft,
+                fit: BoxFit.fitHeight,
               ),
             ),
-            SafeArea(child: _buildBodyWidget(context)),
-          ],
-        ),
+          ),
+          SafeArea(child: _buildBodyWidget(context)),
+        ],
       ),
     );
   }
 
   Widget _buildBodyWidget(BuildContext context) {
-    return ListView.builder(
-        itemCount: 2,
-        itemBuilder: (_, index) {
-          switch (index) {
-            case 0:
-              return ListTile(
-                title: Text('Single answer question'),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const SingleAnswerQuestionPage(
-                            title: 'Single answer question')),
-                  );
-                },
-              );
-            default:
-              return ListTile(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const IncompleteSentenceWrapperPage(
-                            title: 'Single answer question')),
-                  );
-                },
-                title: Text('Incomplete sentence'),
-              );
-          }
-        });
+    return SafeArea(
+      child: ListView.builder(
+          itemCount: 3,
+          itemBuilder: (_, index) {
+            switch (index) {
+              case 0:
+                return ListTile(
+                  title: Text('Single answer question'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SingleAnswerQuestionPage(
+                              title: 'Single answer question')),
+                    );
+                  },
+                );
+              case 1:
+                return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const UnitOneAWrapperPage(
+                              title: 'Single answer question')),
+                    );
+                  },
+                  title: Text('Unit 1 - A'),
+                );
+              case 2:
+                return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const UnitOneBWrapperPage(
+                              title: 'Single answer question')),
+                    );
+                  },
+                  title: Text('Unit 1 - B'),
+                );
+              default:
+                return ListTile(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const UnitOneAWrapperPage(
+                              title: 'Single answer question')),
+                    );
+                  },
+                  title: Text('Unit 1 - A'),
+                );
+            }
+          }),
+    );
   }
 }
 
