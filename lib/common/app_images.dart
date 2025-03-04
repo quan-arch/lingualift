@@ -9,4 +9,5 @@ class AppImages {
   static final radioGrey = 'assets/images/radio_grey.png';
   static final radioRed = 'assets/images/radio_red.png';
   static final arrowRight = 'assets/images/arrow_right.png';
+  static final paperBackground = 'assets/images/paper_background.png';
 }

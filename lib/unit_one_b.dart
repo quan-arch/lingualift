@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lingualift/cubit/incomplete_sentence/incomplete_sentence_cubit.dart';
-import 'package:lingualift/unit_one_a.dart';
+import 'package:lingualift/widgets/incomplete_sentence_body_widget.dart';
 
 class UnitOneBWrapperPage extends StatelessWidget {
   const UnitOneBWrapperPage({super.key, required this.title});
@@ -13,7 +13,7 @@ class UnitOneBWrapperPage extends StatelessWidget {
     return BlocProvider<IncompleteSentenceCubit>(
       create: (_) => IncompleteSentenceCubit()
         ..fetchData(collectionName: 'incomplete-sentence-1'),
-      child: IncompleteSentencePage(title: title),
+      child: IncompleteSentenceBodyWidget(title: title),
     );
   }
 }

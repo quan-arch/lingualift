@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/component/app_blue_button.dart';
@@ -26,7 +27,8 @@ class IncompleteSentenceWidget extends StatefulWidget {
 }
 
 class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
-  QuestionEntity? get questionEntity => widget.listQuestion?[widget.currentIndex ?? 0];
+  QuestionEntity? get questionEntity =>
+      widget.listQuestion?[widget.currentIndex ?? 0];
 
   @override
   void initState() {
@@ -53,9 +55,9 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          const SizedBox(height: 93),
+          SizedBox(height: (MediaQuery.of(context).size.width * 185 / 430) - 100),
           _buildCountdownTimer(context),
-          const SizedBox(height: 58),
+          SizedBox(height: MediaQuery.of(context).size.width * 80 / 430),
           _buildQnA(context)
         ],
       ),
@@ -72,7 +74,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
           AppImages.countdownTimer,
           fit: BoxFit.fill,
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: MediaQuery.of(context).size.width * 7 / 430),
         Text(
           '00:09s',
           style: TextStyle(
@@ -89,32 +91,17 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildQuestion(context, questionEntity?.question ?? ''),
-          const SizedBox(height: 37),
+          SizedBox(height: MediaQuery.of(context).size.width * 20 / 430),
           _buildAnswer(context),
           _hasAnyAnswerIncorrect()
               ? _buildErrorMessage(context, questionEntity)
               : const SizedBox.shrink(),
-          const SizedBox(height: 44),
+          SizedBox(height: MediaQuery.of(context).size.width * 20 / 430),
           _isTapCheckedAnswer
               ? AppWhiteButton(
                   text: 'Next question',
                   onTap: () {
                     widget.onNextPage();
-                    // setState(() {
-                    //   // reset all data
-                    //   _isTapCheckedAnswer = false;
-                    //   _myAnswers.clear();
-                    //   _myAnswers.addAll([
-                    //     AnswerEntity(
-                    //         answer: '',
-                    //         key: '1a',
-                    //         status: AnswerStatus.waiting),
-                    //     AnswerEntity(
-                    //         answer: '',
-                    //         key: '1b',
-                    //         status: AnswerStatus.waiting)
-                    //   ]);
-                    // });
                   },
                 )
               : AppBlueButton(
@@ -131,8 +118,11 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
   Widget _buildQuestion(BuildContext context, String text) {
     return Text(
       text,
-      style: TextStyle(
-          fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.black),
+      style: GoogleFonts.quicksand(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: AppColors.black,
+          height: 1.22),
       textAlign: TextAlign.center,
     );
   }
@@ -146,7 +136,8 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${(widget.currentIndex ?? 0) + 1}', style: TextStyle(fontSize: 16, color: AppColors.black)),
+        Text('${(widget.currentIndex ?? 0) + 1}',
+            style: TextStyle(fontSize: 16, color: AppColors.black)),
         SizedBox(width: 10),
         Expanded(
           child: Text.rich(
@@ -164,16 +155,29 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
     return [
       TextSpan(
         text: ' (',
-        style: TextStyle(fontSize: 16, color: AppColors.black),
+        style: GoogleFonts.quicksand(
+          fontSize: 16,
+          color: Colors.black,
+          height: 1.22,
+        ),
       ),
       TextSpan(
         text: text,
-        style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.black),
+        style: GoogleFonts.quicksand(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Colors.black,
+          height: 1.22,
+        ),
       ),
       TextSpan(
         text: ') ',
-        style: TextStyle(fontSize: 16, color: AppColors.black),
+        style: GoogleFonts.quicksand(
+          fontSize: 16,
+          fontWeight: FontWeight.w300,
+          color: Colors.black,
+          height: 1.22,
+        ),
       ),
     ];
   }
@@ -191,44 +195,41 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
                 alignment: Alignment.bottomCenter,
                 child: Text(
                   '.........................................................',
-                  style: TextStyle(fontSize: 8),
+                  style: TextStyle(fontSize: 16),
                 ),
               ),
             ),
             Align(
               alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 0.0),
-                child: SizedBox(
-                  width: 150,
-                  child: TextFormField(
-                    cursorHeight: 16,
-                    autocorrect: false,
-                    enableSuggestions: false,
-                    keyboardType: TextInputType.text,
-                    textAlign: TextAlign.center,
-                    onChanged: (text) {
-                      updateAnswerByKey(key: sentence.key, answer: text);
-                    },
-                    style: TextStyle(
-                      decoration: _isThisAnswerInCorrect(sentence.key)
-                          ? TextDecoration.lineThrough
-                          : TextDecoration.none,
-                      fontSize: 16,
-                      color: _isThisAnswerCorrect(sentence.key)
-                          ? AppColors.green
-                          : _isThisAnswerInCorrect(sentence.key)
-                              ? AppColors.grey
-                              : AppColors.blue,
-                      fontWeight: _isThisAnswerCorrect(sentence.key)
-                          ? FontWeight.bold
-                          : FontWeight.w300,
-                    ),
-                    maxLines: 1,
-                    decoration: const InputDecoration(
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.all(12.0),
-                    ),
+              child: SizedBox(
+                width: 150,
+                child: TextFormField(
+                  cursorHeight: 16,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  keyboardType: TextInputType.text,
+                  textAlign: TextAlign.center,
+                  onChanged: (text) {
+                    updateAnswerByKey(key: sentence.key, answer: text);
+                  },
+                  style: TextStyle(
+                    decoration: _isThisAnswerInCorrect(sentence.key)
+                        ? TextDecoration.lineThrough
+                        : TextDecoration.none,
+                    fontSize: 16,
+                    color: _isThisAnswerCorrect(sentence.key)
+                        ? AppColors.green
+                        : _isThisAnswerInCorrect(sentence.key)
+                            ? AppColors.grey
+                            : AppColors.blue,
+                    fontWeight: _isThisAnswerCorrect(sentence.key)
+                        ? FontWeight.bold
+                        : FontWeight.w300,
+                  ),
+                  maxLines: 1,
+                  decoration: const InputDecoration(
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.all(12.0),
                   ),
                 ),
               ),
@@ -242,16 +243,17 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
   Widget _buildErrorMessage(BuildContext context, QuestionEntity? question) {
     return Column(
       children: [
-        const SizedBox(height: 8),
+        SizedBox(height: MediaQuery.of(context).size.width * 20 / 430),
         Text(
           'Sorry, not quite...',
-          style: TextStyle(
+          style: GoogleFonts.quicksand(
             fontSize: 16,
             fontWeight: FontWeight.bold,
             color: AppColors.black,
+            height: 1.22,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: MediaQuery.of(context).size.width * 20 / 430),
         ...fromAnswerBoxToWidget(question?.sentences ?? []),
       ],
     );
@@ -262,7 +264,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
     required SentenceEntity sentence,
   }) {
     try {
-      if(_myAnswers.isEmpty) return SizedBox.shrink();
+      if (_myAnswers.isEmpty) return SizedBox.shrink();
       final yourAnswer =
           _myAnswers.where((answer) => answer.key == sentence.key).first.answer;
 
@@ -274,17 +276,16 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            yourAnswer.isNotEmpty ? yourAnswer : 'No answer',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w300,
-              color: AppColors.grey,
-              decoration: yourAnswer.isNotEmpty
-                  ? TextDecoration.lineThrough
-                  : TextDecoration.none,
-            ),
-          ),
+          Text(yourAnswer.isNotEmpty ? yourAnswer : 'No answer',
+              style: GoogleFonts.quicksand(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: AppColors.grey,
+                height: 1.22,
+                decoration: yourAnswer.isNotEmpty
+                    ? TextDecoration.lineThrough
+                    : TextDecoration.none,
+              )),
           const SizedBox(width: 5),
           Image.asset(
             width: 16,
@@ -295,10 +296,11 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
           const SizedBox(width: 5),
           Text(
             sentence.correctAnswer ?? '',
-            style: TextStyle(
+            style: GoogleFonts.quicksand(
               fontSize: 16,
               fontWeight: FontWeight.w300,
               color: AppColors.red,
+              height: 1.22,
             ),
           ),
         ],
@@ -328,8 +330,12 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
         return [
           TextSpan(
             text: sentence.content,
-            style: TextStyle(
-                fontSize: 16, color: AppColors.black, fontWeight: FontWeight.w300),
+            style: GoogleFonts.quicksand(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+              color: Colors.black,
+              height: 1.22,
+            ),
           )
         ];
       case 'answer':
@@ -355,10 +361,9 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
       _isTapCheckedAnswer = true;
     });
     FocusManager.instance.primaryFocus?.unfocus();
-    List<SentenceEntity> correctAnswers =
-        (questionEntity?.sentences ?? [])
-            .where((answer) => answer.type == 'answer')
-            .toList();
+    List<SentenceEntity> correctAnswers = (questionEntity?.sentences ?? [])
+        .where((answer) => answer.type == 'answer')
+        .toList();
     for (int i = 0; i < _myAnswers.length; i++) {
       final key = _myAnswers[i].key;
       final answer = _myAnswers[i].answer;
