@@ -103,14 +103,12 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  PageController _pageController = PageController();
 
   Widget _buildPageView(BuildContext context) {
     return PageView.builder(
-      controller: _pageController,
       onPageChanged: (int page) {
         setState(() {
-          selectedIndex = page;
+          _selectedIndex = page;
         });
       },
       itemCount: 3,
@@ -129,12 +127,12 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
-  int selectedIndex = 0;
+  int _selectedIndex = 0;
 
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
     for (int i = 0; i < 3; i++) {
-      list.add(i == selectedIndex ? _indicator(true) : _indicator(false));
+      list.add(i == _selectedIndex ? _indicator(true) : _indicator(false));
     }
     return list;
   }
