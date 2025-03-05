@@ -10,4 +10,6 @@ class AppImages {
   static final radioRed = 'assets/images/radio_red.png';
   static final arrowRight = 'assets/images/arrow_right.png';
   static final paperBackground = 'assets/images/paper_background.png';
+  static final checkedBox = 'assets/images/checked_box.png';
+  static final uncheckedBox = 'assets/images/unchecked_box.png';
 }

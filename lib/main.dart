@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lingualift/common/app_images.dart';
+import 'package:lingualift/todo_list_page.dart';
 import 'package:lingualift/unit_one_a.dart';
 import 'package:lingualift/single_answer_question.dart';
 import 'package:lingualift/firebase_options.dart';
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
           image: AssetImage(AppImages.paperBackground),
           fit: BoxFit.cover,
         )),
-        child: MyHomePage(title: 'Flutter Demo Home Page'),
+        child: TodoListPage(),
       ),
     );
   }

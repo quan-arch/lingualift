@@ -225,6 +225,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
                     fontWeight: _isThisAnswerCorrect(sentence.key)
                         ? FontWeight.bold
                         : FontWeight.w300,
+                    decorationColor: _isThisAnswerInCorrect(sentence.key) ? AppColors.grey: AppColors.blue,
                   ),
                   maxLines: 1,
                   decoration: const InputDecoration(
@@ -285,6 +286,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
                 decoration: yourAnswer.isNotEmpty
                     ? TextDecoration.lineThrough
                     : TextDecoration.none,
+                decorationColor: yourAnswer.isNotEmpty ? AppColors.grey: AppColors.blue,
               )),
           const SizedBox(width: 5),
           Image.asset(

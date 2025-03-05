@@ -81,6 +81,8 @@ flutter:
     - assets/images/radio_red.png
     - assets/images/arrow_right.png
     - assets/images/paper_background.png
+    - assets/images/checked_box.png
+    - assets/images/unchecked_box.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
