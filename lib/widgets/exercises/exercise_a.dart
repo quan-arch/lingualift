@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lingualift/cubit/incomplete_sentence/incomplete_sentence_cubit.dart';
 import 'package:lingualift/widgets/incomplete_sentence_body_widget.dart';
 
-class UnitOneAWrapperPage extends StatelessWidget {
-  const UnitOneAWrapperPage({super.key, required this.title});
+class ExerciseAWrapperPage extends StatelessWidget {
+  const ExerciseAWrapperPage({super.key, required this.title});
 
   final String title;
 

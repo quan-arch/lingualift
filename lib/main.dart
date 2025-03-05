@@ -3,10 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/todo_list_page.dart';
-import 'package:lingualift/unit_one_a.dart';
+import 'package:lingualift/widgets/exercises/exercise_a.dart';
 import 'package:lingualift/single_answer_question.dart';
 import 'package:lingualift/firebase_options.dart';
-import 'package:lingualift/unit_one_b.dart';
+import 'package:lingualift/widgets/exercises/exercise_b.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UnitOneAWrapperPage(
+                          builder: (context) => const ExerciseAWrapperPage(
                               title: 'Single answer question')),
                     );
                   },
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UnitOneBWrapperPage(
+                          builder: (context) => const ExerciseBWrapperPage(
                               title: 'Single answer question')),
                     );
                   },
@@ -169,7 +169,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const UnitOneAWrapperPage(
+                          builder: (context) => const ExerciseAWrapperPage(
                               title: 'Single answer question')),
                     );
                   },
