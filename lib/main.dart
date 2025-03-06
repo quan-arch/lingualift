@@ -7,6 +7,7 @@ import 'package:lingualift/widgets/exercises/exercise_a.dart';
 import 'package:lingualift/single_answer_question.dart';
 import 'package:lingualift/firebase_options.dart';
 import 'package:lingualift/widgets/exercises/exercise_b.dart';
+import 'package:lingualift/widgets/exercises/exercise_c.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

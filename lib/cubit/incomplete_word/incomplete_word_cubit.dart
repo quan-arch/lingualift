@@ -1,21 +1,23 @@
 import 'package:bloc/bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:lingualift/entity/question_entity.dart';
 import 'package:lingualift/entity/question_word_entity.dart';
+import 'package:lingualift/entity/word_entity.dart';
 import 'package:meta/meta.dart';
 
-part 'incomplete_sentence_state.dart';
+part 'incomplete_word_state.dart';
 
-class IncompleteSentenceCubit extends Cubit<IncompleteSentenceState> {
-  IncompleteSentenceCubit() : super(IncompleteSentenceState());
+class IncompleteWordCubit extends Cubit<IncompleteWordState> {
+  IncompleteWordCubit() : super(IncompleteWordState());
 
-  void fetchData({required String collectionName}){
+  void fetchData(){
     emit(state.copyWith(status: LoadStatus.loading));
-    List<QuestionEntity> data = [];
+    List<QuestionWordEntity> data = [];
     try {
       FirebaseFirestore.instance
-          .collection(collectionName)
+          .collection("incomplete-sentence-2")
           .snapshots()
           .listen((querySnapshot) {
         for (final doc in querySnapshot.docs) {
@@ -24,16 +26,21 @@ class IncompleteSentenceCubit extends Cubit<IncompleteSentenceState> {
             return;
           }
           data = querySnapshot.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> json =
-            document.data()! as Map<String, dynamic>;
-            QuestionEntity data = QuestionEntity.fromJson(json);
+            Map<String, dynamic> json = document.data()! as Map<String, dynamic>;
+            QuestionWordEntity data = QuestionWordEntity.fromJson(json);
             return data;
           }).toList();
         }
-        emit(state.copyWith(listQuestion: data, status: LoadStatus.success));
+        if(data.isEmpty) {
+          emit(state.copyWith(status: LoadStatus.failure));
+        } else {
+          emit(state.copyWith(listQuestion: data.first.words, question: data.first.question,  status: LoadStatus.success));
+        }
       });
     } catch (e, stackTrace) {
-      print('catch:$e');
+      if (kDebugMode) {
+        print('catch:$e');
+      }
       emit(state.copyWith(status: LoadStatus.failure));
     }
   }

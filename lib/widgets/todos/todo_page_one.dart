@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lingualift/entity/todo_entity.dart';
 import 'package:lingualift/widgets/exercises/exercise_a.dart';
 import 'package:lingualift/widgets/exercises/exercise_b.dart';
+import 'package:lingualift/widgets/exercises/exercise_c.dart';
 import 'package:lingualift/widgets/todo_exercise_item.dart';
 
 class TodoPageOne extends StatelessWidget {
@@ -28,6 +29,13 @@ class TodoPageOne extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => const ExerciseBWrapperPage(
+                          title: 'Single answer question')),
+                );
+              } else if(todoEntity.character == 'C'){
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const ExerciseCWrapperWidget(
                           title: 'Single answer question')),
                 );
               }
