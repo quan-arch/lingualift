@@ -5,7 +5,6 @@ import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/component/app_blue_button.dart';
 import 'package:lingualift/component/app_white_button.dart';
 import 'package:lingualift/entity/answer_entity.dart';
-import 'package:lingualift/entity/question_entity.dart';
 import 'package:lingualift/entity/sentence_entity.dart';
 import 'package:lingualift/entity/word_entity.dart';
 
@@ -62,7 +61,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
         children: [
           SizedBox(height: (MediaQuery.of(context).size.width * 145 / 430) - 100),
           _buildCountdownTimer(context),
-          SizedBox(height: MediaQuery.of(context).size.width * 40 / 430),
+          SizedBox(height: MediaQuery.of(context).size.width * 39 / 430),
           _buildQnA(context)
         ],
       ),
@@ -141,8 +140,13 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('${(widget.currentIndex ?? 0) + 1}',
-            style: TextStyle(fontSize: 16, color: AppColors.black)),
+        SizedBox(
+          width: 70,
+          child: Text('${wordEntity?.sender}:',
+              style: TextStyle(fontSize: 16, color: AppColors.black, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.ellipsis,
+          ),
+        ),
         SizedBox(width: 10),
         Expanded(
           child: Text.rich(
@@ -378,9 +382,9 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
     List<SentenceEntity> correctAnswers = [];
     if(widget.listQuestion?.isNotEmpty ?? false) {
       for(int i= 0; i< widget.listQuestion!.length; i++) {
-        correctAnswers = (widget.listQuestion![i].sentences)
+        correctAnswers.addAll((widget.listQuestion![i].sentences)
             .where((answer) => answer.type == 'answer')
-            .toList();
+            .toList());
       }
     }
     for (int i = 0; i < _myAnswers.length; i++) {
