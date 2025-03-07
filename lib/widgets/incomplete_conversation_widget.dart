@@ -59,9 +59,19 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // SizedBox(height: (MediaQuery.of(context).size.width * 145 / 430) - 100),
-          // _buildCountdownTimer(context),
-          SizedBox(height: MediaQuery.of(context).size.width *  54/ 430),
+          SizedBox(
+              height: (WidgetsBinding.instance.window.viewInsets.bottom > 0.0)
+                  ? MediaQuery.of(context).size.width * 24 / 430
+                  : (MediaQuery.of(context).size.width * 145 / 430) - 100
+          ),
+          WidgetsBinding.instance.window.viewInsets.bottom > 0.0
+              ? _buildSmallCountdownTimer(context)
+              : _buildCountdownTimer(context),
+          SizedBox(
+            height: (WidgetsBinding.instance.window.viewInsets.bottom > 0.0)
+                ? MediaQuery.of(context).size.width * 10 / 430
+                : MediaQuery.of(context).size.width * 39 / 430,
+          ),
           _buildQnA(context)
         ],
       ),
@@ -79,6 +89,26 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
           fit: BoxFit.fill,
         ),
         SizedBox(height: MediaQuery.of(context).size.width * 7 / 430),
+        Text(
+          '00:09s',
+          style: TextStyle(
+              fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSmallCountdownTimer(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Image.asset(
+          width: 40,
+          height: 40,
+          AppImages.countdownTimer,
+          fit: BoxFit.fill,
+        ),
+        SizedBox(width: MediaQuery.of(context).size.width * 7 / 430),
         Text(
           '00:09s',
           style: TextStyle(
