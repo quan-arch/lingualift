@@ -12,7 +12,7 @@ part 'incomplete_word_state.dart';
 class IncompleteWordCubit extends Cubit<IncompleteWordState> {
   IncompleteWordCubit() : super(IncompleteWordState());
 
-  void fetchData(){
+  void fetchData() {
     emit(state.copyWith(status: LoadStatus.loading));
     List<QuestionWordEntity> data = [];
     try {
@@ -26,15 +26,21 @@ class IncompleteWordCubit extends Cubit<IncompleteWordState> {
             return;
           }
           data = querySnapshot.docs.map((DocumentSnapshot document) {
-            Map<String, dynamic> json = document.data()! as Map<String, dynamic>;
+            Map<String, dynamic> json =
+                document.data()! as Map<String, dynamic>;
             QuestionWordEntity data = QuestionWordEntity.fromJson(json);
             return data;
           }).toList();
         }
-        if(data.isEmpty) {
+        if (data.isEmpty) {
           emit(state.copyWith(status: LoadStatus.failure));
         } else {
-          emit(state.copyWith(listQuestion: data.first.words, question: data.first.question,  status: LoadStatus.success));
+          emit(state.copyWith(
+            listQuestion: data.first.words,
+            question: data.first.question,
+            totalPage: data.first.totalPage,
+            status: LoadStatus.success,
+          ));
         }
       });
     } catch (e, stackTrace) {
@@ -45,13 +51,13 @@ class IncompleteWordCubit extends Cubit<IncompleteWordState> {
     }
   }
 
-  void nextPage(){
+  void nextPage() {
     final totalPage = state.listQuestion?.length ?? 0;
 
-    if(totalPage == 0) return;
-    if(state.currentIndex == totalPage - 1) return;
+    if (totalPage == 0) return;
+    if (state.currentIndex == totalPage - 1) return;
     emit(state.copyWith(status: LoadStatus.loading));
-    Future.delayed(Duration(milliseconds: 100)).then((_){
+    Future.delayed(Duration(milliseconds: 100)).then((_) {
       var index = state.currentIndex ?? 0;
       final next = index + 1;
       emit(state.copyWith(currentIndex: next, status: LoadStatus.success));

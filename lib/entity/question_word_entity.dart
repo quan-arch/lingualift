@@ -8,6 +8,7 @@ class QuestionWordEntity {
     required this.question,
     required this.type,
     required this.words,
+    required this.totalPage,
   });
 
   QuestionWordEntity.fromJson(Map<String, Object?> json)
@@ -19,10 +20,12 @@ class QuestionWordEntity {
         const [],
     question: (json['question'] ?? '') as String,
     type: (json['type'] ?? '') as String,
+    totalPage: (json['total_page'] ?? '') as int,
   );
 
   final String question;
   final String type;
+  final int totalPage;
   final List<WordEntity> words;
 
   Map<String, Object?> toJson() {
@@ -30,6 +33,7 @@ class QuestionWordEntity {
       'question': question,
       'type': type,
       'words': words,
+      'total_page': totalPage,
     };
   }
 }

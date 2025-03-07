@@ -52,31 +52,35 @@ class _IncompleteConversationBodyState extends State<IncompleteConversationBodyW
               SafeArea(
                 child: Column(
                   children: [
-                    BlocBuilder<IncompleteWordCubit, IncompleteWordState>(
-                      builder: (blocContext, state) {
-                        if (state.status == LoadStatus.loading) {
-                          return SizedBox.shrink();
-                        }
-                        if (state.status == LoadStatus.failure) {
+                    Expanded(
+                      child: BlocBuilder<IncompleteWordCubit, IncompleteWordState>(
+                        builder: (blocContext, state) {
+                          if (state.status == LoadStatus.loading) {
+                            return SizedBox.shrink();
+                          }
+                          if (state.status == LoadStatus.failure) {
+                            return Center(
+                              child: Text('Failure'),
+                            );
+                          }
+                          if (state.status == LoadStatus.success) {
+                            return IncompleteConversationWidget(
+                                question: state.question,
+                                listQuestion: state.listQuestion,
+                                currentIndex: state.currentIndex,
+                                onNextPage: () {
+                                  context
+                                      .read<IncompleteWordCubit>()
+                                      .nextPage();
+                                },
+                              totalPage: state.totalPage,
+                            );
+                          }
                           return Center(
-                            child: Text('Failure'),
+                            child: Text('Init'),
                           );
-                        }
-                        if (state.status == LoadStatus.success) {
-                          return IncompleteConversationWidget(
-                              question: state.question,
-                              listQuestion: state.listRealQuestion,
-                              currentIndex: state.currentIndex,
-                              onNextPage: () {
-                                context
-                                    .read<IncompleteWordCubit>()
-                                    .nextPage();
-                              });
-                        }
-                        return Center(
-                          child: Text('Init'),
-                        );
-                      },
+                        },
+                      ),
                     )
                   ],
                 ),
