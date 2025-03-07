@@ -91,7 +91,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
         SizedBox(height: MediaQuery.of(context).size.width * 7 / 430),
         Text(
           '00:09s',
-          style: TextStyle(
+          style: GoogleFonts.quicksand(
               fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
         ),
       ],
@@ -111,7 +111,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
         SizedBox(width: MediaQuery.of(context).size.width * 7 / 430),
         Text(
           '00:09s',
-          style: TextStyle(
+          style: GoogleFonts.quicksand(
               fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
         ),
       ],
@@ -132,12 +132,13 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
               : const SizedBox.shrink(),
           SizedBox(height: MediaQuery.of(context).size.width * 20 / 430),
           _isTapCheckedAnswer
-              ? AppWhiteButton(
+              ? /*AppWhiteButton(
                   text: 'Next question',
                   onTap: () {
                     widget.onNextPage();
                   },
-                )
+                )*/
+                const SizedBox.shrink()
               : AppBlueButton(
                   text: 'Check the answer',
                   onTap: () {
@@ -234,7 +235,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
                 alignment: Alignment.bottomCenter,
                 child: Text(
                   '.........................................................',
-                  style: TextStyle(fontSize: 16),
+                  style: GoogleFonts.quicksand(fontSize: 16, height: 1.25),
                 ),
               ),
             ),
@@ -251,7 +252,8 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
                   onChanged: (text) {
                     updateAnswerByKey(key: sentence.key, answer: text);
                   },
-                  style: TextStyle(
+                  style: GoogleFonts.quicksand(
+                    height: 1.25,
                     decoration: _isThisAnswerInCorrect(sentence.key)
                         ? TextDecoration.lineThrough
                         : TextDecoration.none,
@@ -398,7 +400,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
         return [
           TextSpan(
             text: sentence.content,
-            style: TextStyle(fontSize: 16, color: AppColors.black),
+            style: GoogleFonts.quicksand(fontSize: 16, color: AppColors.black, height: 1.25),
           )
         ];
     }

@@ -55,7 +55,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: (MediaQuery.of(context).size.width * 185 / 430) - 100),
+          SizedBox(height: (MediaQuery.of(context).size.width * 188 / 430) - 100),
           _buildCountdownTimer(context),
           SizedBox(height: MediaQuery.of(context).size.width * 80 / 430),
           _buildQnA(context)
@@ -77,8 +77,8 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
         SizedBox(height: MediaQuery.of(context).size.width * 7 / 430),
         Text(
           '00:09s',
-          style: TextStyle(
-              fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
+          style: GoogleFonts.quicksand(
+              fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red, height: 1.25),
         ),
       ],
     );
@@ -137,7 +137,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text('${(widget.currentIndex ?? 0) + 1}',
-            style: TextStyle(fontSize: 16, color: AppColors.black)),
+            style: GoogleFonts.quicksand(fontSize: 16, color: AppColors.black, height: 1.25)),
         SizedBox(width: 10),
         Expanded(
           child: Text.rich(
@@ -195,7 +195,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
                 alignment: Alignment.bottomCenter,
                 child: Text(
                   '.........................................................',
-                  style: TextStyle(fontSize: 16),
+                  style: GoogleFonts.quicksand(fontSize: 16, height: 1.25),
                 ),
               ),
             ),
@@ -212,7 +212,8 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
                   onChanged: (text) {
                     updateAnswerByKey(key: sentence.key, answer: text);
                   },
-                  style: TextStyle(
+                  style: GoogleFonts.quicksand(
+                    height: 1.25,
                     decoration: _isThisAnswerInCorrect(sentence.key)
                         ? TextDecoration.lineThrough
                         : TextDecoration.none,
@@ -352,7 +353,7 @@ class _IncompleteSentenceWidgetState extends State<IncompleteSentenceWidget> {
         return [
           TextSpan(
             text: sentence.content,
-            style: TextStyle(fontSize: 16, color: AppColors.black),
+            style: GoogleFonts.quicksand(fontSize: 16, color: AppColors.black, height: 1.25),
           )
         ];
     }
