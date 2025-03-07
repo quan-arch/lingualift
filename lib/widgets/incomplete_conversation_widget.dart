@@ -59,9 +59,9 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: (MediaQuery.of(context).size.width * 145 / 430) - 100),
-          _buildCountdownTimer(context),
-          SizedBox(height: MediaQuery.of(context).size.width * 39 / 430),
+          // SizedBox(height: (MediaQuery.of(context).size.width * 145 / 430) - 100),
+          // _buildCountdownTimer(context),
+          SizedBox(height: MediaQuery.of(context).size.width *  54/ 430),
           _buildQnA(context)
         ],
       ),
@@ -143,7 +143,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
         SizedBox(
           width: 70,
           child: Text('${wordEntity?.sender}:',
-              style: TextStyle(fontSize: 16, color: AppColors.black, fontWeight: FontWeight.bold),
+              style: GoogleFonts.quicksand(fontSize: 16, color: AppColors.black, fontWeight: FontWeight.bold, height: 1.25),
               overflow: TextOverflow.ellipsis,
           ),
         ),

@@ -6,10 +6,16 @@ enum LoadStatus { loading, success, failure }
 class IncompleteWordState implements Equatable {
   final List<WordEntity>? listQuestion;
   final LoadStatus? status;
-  final int? currentIndex;
+  final int currentIndex;
   final String? question;
 
-  const IncompleteWordState({this.listQuestion, this.status, this.currentIndex, this.question});
+  const IncompleteWordState({this.listQuestion, this.status, this.currentIndex = 1, this.question});
+
+  List<WordEntity>? get listRealQuestion {
+    return listQuestion
+        ?.where((answer) => answer.page == currentIndex)
+        .toList();
+  }
 
   IncompleteWordState copyWith({
     List<WordEntity>? listQuestion,

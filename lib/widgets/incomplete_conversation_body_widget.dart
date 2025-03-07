@@ -21,7 +21,9 @@ class _IncompleteConversationBodyState extends State<IncompleteConversationBodyW
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
       body: Padding(
-        padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).padding.top,
+        ),
         child: DecoratedBox(
           decoration: BoxDecoration(
             image: DecorationImage(
@@ -63,7 +65,7 @@ class _IncompleteConversationBodyState extends State<IncompleteConversationBodyW
                         if (state.status == LoadStatus.success) {
                           return IncompleteConversationWidget(
                               question: state.question,
-                              listQuestion: state.listQuestion,
+                              listQuestion: state.listRealQuestion,
                               currentIndex: state.currentIndex,
                               onNextPage: () {
                                 context
@@ -101,27 +103,4 @@ class _IncompleteConversationBodyState extends State<IncompleteConversationBodyW
       ),
     );
   }
-
-// List<QuestionEntity> mock = [
-// IncompleteSentenceQuestion(
-//   question:
-//       'A. Write the verb in brackets in the correct form, present simple or present continuous, in each gap.',
-//   type: 'incomplete_sentence',
-//   sentences: [
-//     Sentence(content: 'My brother', type: 'word', key: ''),
-//     Sentence(
-//         content: '', type: 'answer', key: '1a', correctAnswer: 'is doing'),
-//     Sentence(content: 'do', type: 'suggestion', key: '1a'),
-//     Sentence(content: 'degree at university so I', type: 'word', key: '1a'),
-//     Sentence(
-//         content: '',
-//         type: 'answer',
-//         key: '1b',
-//         correctAnswer: 'don\'t see'),
-//     Sentence(content: 'see', type: 'suggestion', key: '1b'),
-//     Sentence(
-//         content: 'him very often, unfortunately.', type: 'word', key: ''),
-//   ],
-// )
-// ];
 }
