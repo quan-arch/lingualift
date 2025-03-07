@@ -3,9 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/component/app_blue_button.dart';
+import 'package:lingualift/component/app_white_button.dart';
 import 'package:lingualift/entity/answer_entity.dart';
 import 'package:lingualift/entity/sentence_entity.dart';
 import 'package:lingualift/entity/word_entity.dart';
+import 'package:lingualift/widgets/incomplete/dialog/incomplete_conversion_dialog.dart';
 
 class IncompleteConversationItem extends StatefulWidget {
   final List<WordEntity>? listQuestion;
@@ -22,8 +24,8 @@ class IncompleteConversationItem extends StatefulWidget {
       _IncompleteConversationItemState();
 }
 
-class _IncompleteConversationItemState
-    extends State<IncompleteConversationItem> with AutomaticKeepAliveClientMixin{
+class _IncompleteConversationItemState extends State<IncompleteConversationItem>
+    with AutomaticKeepAliveClientMixin {
   @override
   void initState() {
     List<SentenceEntity> answers = [];
@@ -47,6 +49,7 @@ class _IncompleteConversationItemState
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 43),
       child: Column(
@@ -59,20 +62,53 @@ class _IncompleteConversationItemState
               ? _buildErrorMessage(context, widget.listQuestion)
               : const SizedBox.shrink(),
           SizedBox(height: MediaQuery.of(context).size.width * 20 / 430),
-          _isTapCheckedAnswer
-              ? /*AppWhiteButton(
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _isTapCheckedAnswer
+                  ? /*AppWhiteButton(
                   text: 'Next question',
                   onTap: () {
                     widget.onNextPage();
                   },
                 )*/
               const SizedBox.shrink()
-              : AppBlueButton(
-                  text: 'Check the answer',
-                  onTap: () {
-                    checkAnswer();
-                  },
-                )
+                  : AppBlueButton(
+                text: 'Check the answer',
+                onTap: () {
+                  checkAnswer();
+                },
+              ),
+              const SizedBox(width: 20),
+              AppWhiteButton(
+                text: 'Open box',
+                onTap: () {
+                  showGeneralDialog(
+                    context: context,
+                    barrierColor: Colors.black54,
+                    barrierDismissible: true,
+                    barrierLabel: 'Label',
+                    pageBuilder: (_, __, ___) {
+                      return Container(
+                        margin: EdgeInsets.only(top: 130),
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: Material(
+                              child: IncompleteConversationDialog()),
+                        ),
+                      );
+                    },
+                    transitionBuilder: (ctx, a1, a2, child) {
+                      return SlideTransition(
+                          position:
+                          Tween(begin: Offset(-1, 0), end: Offset(0, 0)).animate(a1),
+                          child: child);
+                    },
+                  );
+                },
+              )
+            ],
+          )
         ],
       ),
     );
@@ -210,8 +246,13 @@ class _IncompleteConversationItemState
       children: [
         SizedBox(
           width: 70,
-          child: Text('${wordEntity?.sender}:',
-            style: GoogleFonts.quicksand(fontSize: 16, color: AppColors.black, fontWeight: FontWeight.bold, height: 1.25),
+          child: Text(
+            '${wordEntity?.sender}:',
+            style: GoogleFonts.quicksand(
+                fontSize: 16,
+                color: AppColors.black,
+                fontWeight: FontWeight.bold,
+                height: 1.25),
             overflow: TextOverflow.ellipsis,
           ),
         ),
@@ -298,12 +339,14 @@ class _IncompleteConversationItemState
                     color: _isThisAnswerCorrect(sentence.key)
                         ? AppColors.green
                         : _isThisAnswerInCorrect(sentence.key)
-                        ? AppColors.grey
-                        : AppColors.blue,
+                            ? AppColors.grey
+                            : AppColors.blue,
                     fontWeight: _isThisAnswerCorrect(sentence.key)
                         ? FontWeight.bold
                         : FontWeight.w300,
-                    decorationColor: _isThisAnswerInCorrect(sentence.key) ? AppColors.grey: AppColors.blue,
+                    decorationColor: _isThisAnswerInCorrect(sentence.key)
+                        ? AppColors.grey
+                        : AppColors.blue,
                   ),
                   maxLines: 1,
                   decoration: const InputDecoration(
@@ -321,8 +364,8 @@ class _IncompleteConversationItemState
 
   Widget _buildErrorMessage(BuildContext context, List<WordEntity>? question) {
     List<SentenceEntity> sentences = [];
-    if(question?.isNotEmpty ?? false) {
-      for(int i= 0; i< question!.length; i++) {
+    if (question?.isNotEmpty ?? false) {
+      for (int i = 0; i < question!.length; i++) {
         sentences.addAll(question[i].sentences);
       }
     }
@@ -371,7 +414,8 @@ class _IncompleteConversationItemState
                 decoration: yourAnswer.isNotEmpty
                     ? TextDecoration.lineThrough
                     : TextDecoration.none,
-                decorationColor: yourAnswer.isNotEmpty ? AppColors.grey: AppColors.blue,
+                decorationColor:
+                    yourAnswer.isNotEmpty ? AppColors.grey : AppColors.blue,
               )),
           const SizedBox(width: 5),
           Image.asset(

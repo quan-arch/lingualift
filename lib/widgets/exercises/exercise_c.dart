@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:lingualift/cubit/incomplete_word/incomplete_word_cubit.dart';
-import 'package:lingualift/widgets/incomplete_conversation_body_widget.dart';
+import 'package:lingualift/widgets/incomplete/dialog/incomplete_conversation_body_widget.dart';
 
 class ExerciseCWrapperWidget extends StatelessWidget {
   const ExerciseCWrapperWidget({super.key, required this.title});

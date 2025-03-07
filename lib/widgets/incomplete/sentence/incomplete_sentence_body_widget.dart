@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/cubit/incomplete_sentence/incomplete_sentence_cubit.dart';
-import 'package:lingualift/widgets/incomplete_sentence_widget.dart';
+import 'package:lingualift/widgets/incomplete/sentence/incomplete_sentence_widget.dart';
 
 class IncompleteSentenceBodyWidget extends StatefulWidget {
   const IncompleteSentenceBodyWidget({super.key, required this.title});

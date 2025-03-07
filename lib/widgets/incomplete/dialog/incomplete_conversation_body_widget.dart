@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/cubit/incomplete_word/incomplete_word_cubit.dart';
-import 'package:lingualift/widgets/incomplete_conversation_widget.dart';
+import 'package:lingualift/widgets/incomplete/dialog/incomplete_conversation_widget.dart';
 
 class IncompleteConversationBodyWidget extends StatefulWidget {
   const IncompleteConversationBodyWidget({super.key, required this.title});

@@ -4,7 +4,8 @@ import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/cubit/incomplete_word/incomplete_word_cubit.dart';
 import 'package:lingualift/entity/word_entity.dart';
-import 'package:lingualift/widgets/incomplete_conversation_item.dart';
+import 'package:lingualift/widgets/incomplete/dialog/incomplete_conversation_item.dart';
+import 'package:lingualift/widgets/incomplete/dialog/incomplete_conversion_dialog.dart';
 
 class IncompleteConversationWidget extends StatefulWidget {
   final List<WordEntity>? listQuestion;
@@ -28,7 +29,6 @@ class IncompleteConversationWidget extends StatefulWidget {
 }
 
 class _IncompleteConversationState extends State<IncompleteConversationWidget> {
-
   @override
   Widget build(BuildContext context) {
     return _buildBodyWidget(context);
@@ -59,7 +59,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
   }
 
   Widget _buildPageView(BuildContext context) {
-    if(widget.totalPage == 0) return SizedBox.shrink();
+    if (widget.totalPage == 0) return SizedBox.shrink();
     return PageView.builder(
       onPageChanged: (int page) {
         setState(() {
@@ -69,7 +69,7 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
       itemCount: widget.totalPage,
       itemBuilder: (BuildContext context, int index) {
         return IncompleteConversationItem(
-            listQuestion: widget.listQuestion.filterByIndex( index + 1 ) ?? [],
+            listQuestion: widget.listQuestion.filterByIndex(index + 1) ?? [],
             question: widget.question);
       },
     );
@@ -115,7 +115,9 @@ class _IncompleteConversationState extends State<IncompleteConversationWidget> {
         Text(
           '00:09s',
           style: GoogleFonts.quicksand(
-              fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.red),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.red),
         ),
       ],
     );
