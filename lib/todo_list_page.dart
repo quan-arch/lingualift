@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lingualift/common/app_colors.dart';
 import 'package:lingualift/common/app_images.dart';
 import 'package:lingualift/entity/todo_entity.dart';
+import 'package:lingualift/new_word_page.dart';
 import 'package:lingualift/widgets/exercises/exercise_a.dart';
 import 'package:lingualift/widgets/exercises/exercise_b.dart';
 import 'package:lingualift/widgets/todo_checked_box_item.dart';
@@ -78,6 +79,25 @@ class _TodoListPageState extends State<TodoListPage> {
               ),
             ],
           ),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const NewWordWrapperWidget(
+                    title: 'New words')),
+          );
+        },
+        label: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 4.0),
+              child: Icon(Icons.check_box_outlined),
+            ),
+            Text("Vocabulary")
+          ],
         ),
       ),
     );
