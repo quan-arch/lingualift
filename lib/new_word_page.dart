@@ -8,7 +8,6 @@ import 'package:lingualift/component/app_white_button.dart';
 import 'package:lingualift/cubit/new_word/new_word_cubit.dart';
 import 'package:lingualift/entity/answer_entity.dart';
 import 'package:lingualift/entity/new_word_entity.dart';
-import 'package:lingualift/entity/word_entity.dart';
 
 class NewWordWrapperWidget extends StatelessWidget {
   const NewWordWrapperWidget({super.key, required this.title});
@@ -192,7 +191,7 @@ class _NewWordPageState extends State<NewWordWidget> {
 
   Widget _buildBodyWidget(BuildContext context,
       {required List<NewWordEntity> list}) {
-    if (list.isEmpty) return const SizedBox.shrink();
+    if (list.isEmpty) return const Center(child: Text('Empty'),);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -250,7 +249,7 @@ class _NewWordPageState extends State<NewWordWidget> {
               ? AppWhiteButton(
             text: 'Next question',
             onTap: () {
-              //widget.onNextPage();
+              context.read<NewWordCubit>().nextPage();
             },
           )
               : AppBlueButton(
@@ -345,24 +344,24 @@ class _NewWordPageState extends State<NewWordWidget> {
                   keyboardType: TextInputType.text,
                   textAlign: TextAlign.center,
                   onChanged: (text) {
-                    // updateAnswerByKey(key: sentence.key, answer: text);
+                    updateAnswerByKey(key: newWord.word, answer: text);
                   },
                   style: GoogleFonts.quicksand(
                     height: 1.25,
-                    decoration: /*_isThisAnswerInCorrect(sentence.key)
+                    decoration: _isThisAnswerInCorrect(newWord.word)
                         ? TextDecoration.lineThrough
-                        : */
+                        :
                         TextDecoration.none,
                     fontSize: 16,
-                    color: /*_isThisAnswerCorrect(sentence.key)
+                    color: _isThisAnswerCorrect(newWord.word)
                         ? AppColors.green
-                        : _isThisAnswerInCorrect(sentence.key)
+                        : _isThisAnswerInCorrect(newWord.word)
                         ? AppColors.grey
-                        : */
+                        :
                         AppColors.blue,
-                    fontWeight: /*_isThisAnswerCorrect(sentence.key)
+                    fontWeight: _isThisAnswerCorrect(newWord.word)
                         ? FontWeight.bold
-                        : */
+                        :
                         FontWeight.w300,
                     decorationColor: /*_isThisAnswerInCorrect(sentence.key) ? AppColors.grey: */
                         AppColors.blue,
@@ -503,6 +502,16 @@ class _NewWordPageState extends State<NewWordWidget> {
     } on Exception catch (e) {
       print(e.toString());
       return SizedBox.shrink();
+    }
+  }
+
+  void updateAnswerByKey({required String key, required String answer}) {
+    final index = _myAnswers.indexWhere((c) => c.key == key);
+    if (index != -1) {
+      setState(() {
+        _myAnswers[index] = _myAnswers[index]
+            .copyWith(answer: answer, status: AnswerStatus.waiting);
+      });
     }
   }
 

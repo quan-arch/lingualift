@@ -31,7 +31,7 @@ class NewWordCubit extends Cubit<NewWordState> {
             return data;
           }).toList();
         }
-        emit(state.copyWith(listNewWord: data, status: LoadStatus.success));
+        emit(state.copyWith(list: data, status: LoadStatus.success));
       });
     } catch (e, stackTrace) {
       print('catch:$e');
@@ -40,15 +40,17 @@ class NewWordCubit extends Cubit<NewWordState> {
   }
 
   void nextPage(){
-    // final totalPage = state.listQuestion?.length ?? 0;
-    //
-    // if(totalPage == 0) return;
-    // if(state.currentIndex == totalPage - 1) return;
-    // emit(state.copyWith(status: LoadStatus.loading));
-    // Future.delayed(Duration(milliseconds: 100)).then((_){
-    //   var index = state.currentIndex ?? 0;
-    //   final next = index + 1;
-    //   emit(state.copyWith(currentIndex: next, status: LoadStatus.success));
-    // });
+    if(state.listNewWord.isEmpty) return;
+    emit(state.copyWith(status: LoadStatus.loading));
+    final blacklist = List<NewWordEntity>.from(state.blackList ?? []);
+    for (var e in state.listNewWord) {
+      final index = blacklist.indexWhere((c) => c.word == e.word);
+      if(index == -1) {
+        blacklist.add(e);
+      }
+    }
+    Future.delayed(Duration(milliseconds: 100)).then((_){
+      emit(state.copyWith(blackList: blacklist, status: LoadStatus.success));
+    });
   }
 }
