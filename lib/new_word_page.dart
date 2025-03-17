@@ -323,7 +323,7 @@ class _NewWordPageState extends State<NewWordWidget> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 1.0),
       child: SizedBox(
-        width: 150,
+        width: 166,
         height: 20,
         child: Stack(
           children: [
@@ -331,7 +331,7 @@ class _NewWordPageState extends State<NewWordWidget> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: Text(
-                  '.........................................................',
+                  '........................................................................',
                   style: GoogleFonts.quicksand(fontSize: 16, height: 1.25),
                 ),
               ),
@@ -339,7 +339,7 @@ class _NewWordPageState extends State<NewWordWidget> {
             Align(
               alignment: Alignment.bottomCenter,
               child: SizedBox(
-                width: 150,
+                width: 166,
                 child: TextFormField(
                   cursorHeight: 16,
                   autocorrect: false,
@@ -371,6 +371,7 @@ class _NewWordPageState extends State<NewWordWidget> {
                   ),
                   maxLines: 1,
                   decoration: const InputDecoration(
+                    isDense: true,
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.all(12.0),
                   ),
