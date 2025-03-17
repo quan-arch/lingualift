@@ -24,7 +24,7 @@ class NewWordWrapperWidget extends StatelessWidget {
             return SizedBox.shrink();
           }
           if (state.status == LoadStatus.failure) {
-            return _buildScaffold(
+            return buildScaffold(
               context: context,
               child: Center(
                 child: Text('Failure'),
@@ -35,14 +35,14 @@ class NewWordWrapperWidget extends StatelessWidget {
             return NewWordWidget(list: state.listNewWord ?? [],);
           }
           return Center(
-            child: _buildScaffold(context: context, child: Text('Init')),
+            child: buildScaffold(context: context, child: Text('Init')),
           );
         },
       ),
     );
   }
 
-  Widget _buildScaffold({required BuildContext context, required Widget child}) {
+  Widget buildScaffold({required BuildContext context, required Widget child}) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
@@ -277,42 +277,45 @@ class _NewWordPageState extends State<NewWordWidget> {
 
   Widget _buildAnswer(BuildContext context,
       {required int index, required NewWordEntity newWord}) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('${index + 1}.',
-            style: GoogleFonts.quicksand(
-              fontSize: 16,
-              color: AppColors.black,
-              fontWeight: FontWeight.bold,
-              height: 1.25,
-            )),
-        SizedBox(width: 10),
-        Expanded(
-          child: Text.rich(
-            textAlign: TextAlign.start,
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: '${newWord.word} =',
-                  style: GoogleFonts.quicksand(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    height: 1.22,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('${index + 1}.',
+              style: GoogleFonts.quicksand(
+                fontSize: 16,
+                color: AppColors.black,
+                fontWeight: FontWeight.bold,
+                height: 1.25,
+              )),
+          SizedBox(width: 10),
+          Expanded(
+            child: Text.rich(
+              textAlign: TextAlign.start,
+              TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${newWord.word} =',
+                    style: GoogleFonts.quicksand(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 1.22,
+                    ),
                   ),
-                ),
-                WidgetSpan(
-                  child: const SizedBox(width: 10),
-                ),
-                WidgetSpan(
-                  child: _buildAnswerBox(context, newWord),
-                )
-              ],
+                  WidgetSpan(
+                    child: const SizedBox(width: 10),
+                  ),
+                  WidgetSpan(
+                    child: _buildAnswerBox(context, newWord),
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

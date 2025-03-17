@@ -11,6 +11,34 @@ part 'new_word_state.dart';
 class NewWordCubit extends Cubit<NewWordState> {
   NewWordCubit() : super(NewWordState());
 
+  void fetchUnit2Data(){
+    emit(state.copyWith(status: LoadStatus.loading));
+    List<NewWordEntity> data = [];
+    try {
+      FirebaseFirestore.instance
+          .collection('thinking-learning')
+          .snapshots()
+          .listen((querySnapshot) {
+        for (final doc in querySnapshot.docs) {
+          if (!doc.exists) {
+            emit(state.copyWith(status: LoadStatus.failure));
+            return;
+          }
+          data = querySnapshot.docs.map((DocumentSnapshot document) {
+            Map<String, dynamic> json =
+            document.data()! as Map<String, dynamic>;
+            NewWordEntity data = NewWordEntity.fromJson(json);
+            return data;
+          }).toList();
+        }
+        emit(state.copyWith(list: data, status: LoadStatus.success));
+      });
+    } catch (e, stackTrace) {
+      print('catch:$e');
+      emit(state.copyWith(status: LoadStatus.failure));
+    }
+  }
+
   void fetchData(){
     emit(state.copyWith(status: LoadStatus.loading));
     List<NewWordEntity> data = [];
